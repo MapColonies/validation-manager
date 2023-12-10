@@ -14,3 +14,24 @@ export const SERVICES: Record<string, symbol> = {
   METER: Symbol('Meter'),
 };
 /* eslint-enable @typescript-eslint/naming-convention */
+
+export const footprintSchema = {
+  type: 'object',
+  properties: {
+    type: { type: 'string', enum: ['Polygon'] },
+    coordinates: {
+      type: 'array',
+      items: {
+        type: 'array',
+        items: {
+          type: 'array',
+          items: { type: 'number' },
+          minItems: 2,
+          maxItems: 2,
+        },
+      },
+    },
+  },
+  required: ['type', 'coordinates'],
+  additionalProperties: false,
+};

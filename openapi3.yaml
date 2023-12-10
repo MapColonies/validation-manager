@@ -1,59 +1,70 @@
 openapi: 3.0.1
 info:
-  title: service-name
-  description: basic template for map colonies service
+  title: validation-manager
+  description: validation manager for 3d services
   version: 1.0.0
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 
 paths:
-  /anotherResource:
-    get:
-      operationId: getAnotherResource
-      tags:
-        - anotherResource
-      summary: gets the resource
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/anotherResource'
-  /resourceName:
-    get:
-      operationId: getResourceName
-      tags:
-        - resourceName
-      summary: gets the resource
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/resource'
+  /ingestion:
     post:
-      operationId: createResource
+      operationId: ingestion
       tags:
-        - resourceName
-      summary: creates a new record of type resource
+        - ingestion
+      summary: validates the metadata of new product for ingestion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/payload'
       responses:
-        201:
-          description: created
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resource'
-        400:
-          description: Bad Request
+                $ref: '#/components/schemas/validationResponse'
+  /update/{identifier}:
+    post:
+      operationId: update
+      tags:
+        - update
+      parameters:
+        - $ref: '#/components/parameters/identifier'
+      summary: validates the updated metadata of existing product for update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './Schema/3dCatalog/3dMetadata.yaml#/components/schemas/updatePayload'
+      responses:
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: '#/components/schemas/validationResponse'
 components:
+  parameters:
+    identifier:
+      in: path
+      name: identifier
+      required: true
+      schema:
+        type: string
+      description: Metadata record identifier
   schemas:
+    validationResponse:
+      type: object
+      required:
+        - isValidated
+      properties:
+        isValidated:
+          type: boolean
+        reason:
+          type: string
     error:
       type: object
       required:
@@ -61,27 +72,21 @@ components:
       properties:
         message:
           type: string
-    resource:
+    payload:
       type: object
+      description: 3d model payload
       required:
-        - id
-        - name
-        - description
+        - modelPath
+        - tilesetFilename
+        - metadata
       properties:
-        id:
-          type: number
-          format: int64
-        name:
+        modelPath:
           type: string
-        description:
+          description: Model files location path (from pv)
+          example: /home/3DModels/NewYork
+        tilesetFilename:
           type: string
-    anotherResource:
-      type: object
-      required:
-        - kind
-        - isAlive
-      properties:
-        kind:
-          type: string
-        isAlive:
-          type: boolean
+          description: Model tileset filename
+          example: tileset.json
+        metadata:
+          $ref: './Schema/3dCatalog/3dMetadata.yaml#/components/schemas/basic-payload'
