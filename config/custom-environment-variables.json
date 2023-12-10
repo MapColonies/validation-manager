@@ -38,5 +38,17 @@
         }
       }
     }
+  },
+  "paths": {
+    "pvPath": "PV_SOURCE_PATH"
+  },
+  "percentageLimit": "PERCENTAGE_LIMIT",
+  "lookupTables": {
+    "url": "LOOKUP_TABLES_URL",
+    "subUrl": "LOOKUP_TABLES_SUB_URL"
+  },
+  "catalog": {
+    "url": "CATALOG_URL",
+    "subUrl": "CATALOG_SUB_URL"
   }
 }
